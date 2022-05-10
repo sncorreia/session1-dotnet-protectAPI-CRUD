@@ -1,8 +1,16 @@
+using session1_protectAPI_CRUD.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// Registering the repository as a singleton 
+builder.Services.AddSingleton<IWeatherForecastsRepository,InMemWeatherForecastsRepository>();
+
+builder.Services.AddControllers(options =>
+{
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
