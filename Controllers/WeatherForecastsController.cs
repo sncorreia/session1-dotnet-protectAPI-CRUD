@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using session1_protectAPI_CRUD.Dtos;
 using session1_protectAPI_CRUD.Models;
 using session1_protectAPI_CRUD.Repositories;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.Resource;
 
 namespace session1_protectAPI_CRUD.Controllers
 {
@@ -13,6 +15,12 @@ namespace session1_protectAPI_CRUD.Controllers
     {
         private readonly IWeatherForecastsRepository _repository;
 
+        private readonly Dictionary<string, string[]> _scopes = new()
+        {
+            { "read", new string[] { "Weather.Read.All" } },
+            { "write", new string[] { "Weather.ReadWrite.All" } }
+        };
+
         public WeatherForecastsController(IWeatherForecastsRepository repository)
         {
             _repository = repository;
@@ -21,6 +29,7 @@ namespace session1_protectAPI_CRUD.Controllers
         [HttpGet] // GET /weatherForecasts
         public async Task<IEnumerable<WeatherForecastDto>> GetWeatherForecastsAsync()
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["read"]);
             var weatherForecasts = (await _repository.GetAllWeatherForecastsAsync()).Select(x => x.AsDto());
             return weatherForecasts;
         }
@@ -28,6 +37,7 @@ namespace session1_protectAPI_CRUD.Controllers
         [HttpGet("{id}")] // GET /weatherForecasts/{id}
         public async Task<ActionResult<WeatherForecastDto>> GetWeatherForecastAsync(Guid id)
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["read"]);
             var weatherForecast = await _repository.GetWeatherForecastByIdAsync(id);
 
             if(weatherForecast is null)
@@ -40,6 +50,7 @@ namespace session1_protectAPI_CRUD.Controllers
         [HttpPost] // POST /weatherForecasts
         public async Task<ActionResult<WeatherForecastDto>> CreateWeatherForecastAsync(CreateWeatherForecastDto weatherForecastDto)
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["write"]);
             WeatherForecast weatherForecast = new()
             {
                 Id = Guid.NewGuid(),
@@ -57,6 +68,7 @@ namespace session1_protectAPI_CRUD.Controllers
         [HttpPut("{id}")] // PUT /weatherForecasts/{id}
         public async Task<ActionResult> UpdateWeatherForecastAsync(Guid id, UpdateWeatherForecastDto weatherForecastDto)
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["write"]);
             var existingWeatherForecast = await _repository.GetWeatherForecastByIdAsync(id);
             if(existingWeatherForecast is null)
             {
@@ -78,6 +90,7 @@ namespace session1_protectAPI_CRUD.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteWeatherForecastAsync(Guid id)
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["write"]);
             var existingWeatherForecast = await _repository.GetWeatherForecastByIdAsync(id);
             if (existingWeatherForecast is null)
             {
