@@ -15,6 +15,7 @@ namespace session1_protectAPI_CRUD.Controllers
     {
         private readonly IWeatherForecastsRepository _repository;
 
+        // Dictionary to correlate actions with the scopes needed
         private readonly Dictionary<string, string[]> _scopes = new()
         {
             { "read", new string[] { "Weather.Read.All" } },
@@ -88,7 +89,7 @@ namespace session1_protectAPI_CRUD.Controllers
         }
 
         [Authorize(Roles = "Weather.Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")] // DELETE /weatherForecasts/{id}
         public async Task<ActionResult> DeleteWeatherForecastAsync(Guid id)
         {
             HttpContext.VerifyUserHasAnyAcceptedScope(_scopes["write"]);
