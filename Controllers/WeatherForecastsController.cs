@@ -87,6 +87,7 @@ namespace session1_protectAPI_CRUD.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Weather.Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteWeatherForecastAsync(Guid id)
         {
