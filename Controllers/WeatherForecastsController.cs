@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using session1_protectAPI_CRUD.Dtos;
 using session1_protectAPI_CRUD.Models;
@@ -5,6 +6,7 @@ using session1_protectAPI_CRUD.Repositories;
 
 namespace session1_protectAPI_CRUD.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastsController : ControllerBase

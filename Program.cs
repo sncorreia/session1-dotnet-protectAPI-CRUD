@@ -1,8 +1,10 @@
+using Microsoft.Identity.Web;
 using session1_protectAPI_CRUD.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
 
 // Registering the repository as a singleton 
 builder.Services.AddSingleton<IWeatherForecastsRepository,InMemWeatherForecastsRepository>();
@@ -25,7 +27,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
